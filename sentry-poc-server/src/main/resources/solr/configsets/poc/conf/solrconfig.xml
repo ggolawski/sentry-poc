@@ -1,0 +1,36 @@
+<?xml version="1.0" ?>
+
+<config>
+  <schemaFactory class="ClassicIndexSchemaFactory"/>
+  <luceneMatchVersion>LATEST</luceneMatchVersion>
+
+   <requestDispatcher handleSelect="false" >
+    <requestParsers addHttpRequestToContext="true"/>
+  </requestDispatcher>
+
+  <requestHandler name="/select" class="solr.SearchHandler">
+    <arr name="first-components">
+      <str>queryDocAuthorization</str>
+    </arr>
+  </requestHandler>
+
+  <requestHandler name="/get" class="solr.RealTimeGetHandler">
+     <arr name="first-components">
+       <str>queryDocAuthorization</str>
+     </arr>
+  </requestHandler>
+
+  <queryParser name="subset" class="org.apache.solr.handler.component.SubsetQueryPlugin"/>
+
+  <searchComponent name="queryDocAuthorization" class="org.apache.solr.handler.component.SolrAttrBasedFilter">
+    <bool name="enabled">true</bool>
+    <str name="ldapProviderUrl">ldap://localhost:2389</str>
+    <str name="ldapAuthType">simple</str>
+    <str name="ldapAdminUser">cn=admin,dc=example,dc=org</str>
+    <str name="ldapAdminPassword"><![CDATA[admin]]></str>
+    <str name="ldapBaseDN">dc=example,dc=org</str>
+    <str name="ldapUserSearchFilter"><![CDATA[(&(uid={0})(memberOf=cn=users,dc=example,dc=org))]]></str>
+    <str name="andQParser">subset</str>
+    <lst name="field_attr_mappings"></lst>
+  </searchComponent>
+</config>
